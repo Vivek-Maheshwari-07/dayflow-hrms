@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Attendance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        /* Shared CSS */
+        :root { --primary-color: #4F46E5; --bg-body: #F3F4F6; --bg-card: #FFFFFF; --bg-sidebar: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --border-color: #E5E7EB; }
+        [data-theme="dark"] { --primary-color: #6366f1; --bg-body: #0F172A; --bg-card: #1E293B; --bg-sidebar: #1E293B; --text-main: #F9FAFB; --text-muted: #9CA3AF; --border-color: #334155; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; transition:background 0.3s, color 0.3s; }
+        body { background-color:var(--bg-body); color:var(--text-main); height:100vh; display:flex; overflow:hidden; }
+        a { text-decoration:none; color:inherit; }
+        
+        .sidebar { width:260px; background:var(--bg-sidebar); border-right:1px solid var(--border-color); display:flex; flex-direction:column; padding:20px; flex-shrink:0; }
+        .nav-links { list-style:none; } .nav-links li { margin-bottom:8px; }
+        .nav-links a { display:flex; align-items:center; padding:12px; color:var(--text-muted); border-radius:8px; font-weight:500; }
+        .nav-links a:hover, .nav-links a.active { background-color:var(--primary-color); color:white; }
+        .nav-links i { margin-right:12px; }
+        .main-content { flex:1; padding:30px; overflow-y:auto; }
+
+        .table-card { background:var(--bg-card); border-radius:12px; border:1px solid var(--border-color); overflow:hidden; margin-top: 20px; }
+        table { width:100%; border-collapse:collapse; }
+        th, td { padding:15px; text-align:left; border-bottom:1px solid var(--border-color); }
+        th { background:var(--bg-body); color:var(--text-muted); font-size:0.8rem; text-transform:uppercase; font-weight:600; }
+        
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .Present { background: rgba(16, 185, 129, 0.15); color: #10B981; }
+        .Absent { background: rgba(239, 68, 68, 0.15); color: #EF4444; }
+        .Late { background: rgba(245, 158, 11, 0.15); color: #F59E0B; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div style="margin-bottom:40px;"><h2 style="color:var(--primary-color);">HRMS<span style="font-size:0.6em; color:var(--text-muted);">.Emp</span></h2></div>
+        <ul class="nav-links">
+            <li><a href="dashboard.html"><i class="ri-dashboard-line"></i> Dashboard</a></li>
+            <li><a href="profile.html"><i class="ri-user-settings-line"></i> My Profile</a></li>
+            <li><a href="attendance.html" class="active"><i class="ri-time-line"></i> Attendance</a></li>
+            <li><a href="leave.html"><i class="ri-calendar-check-line"></i> Leave Request</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <h1>My Attendance History</h1>
+        <div class="table-card">
+            <table>
+                <thead><tr><th>Date</th><th>Status</th></tr></thead>
+                <tbody id="attBody"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        const tbody = document.getElementById('attBody');
+
+        // Theme Logic
+        if(localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
+
+        function loadAttendance() {
+            // 1. Get Data
+            const allAtt = JSON.parse(localStorage.getItem('hrms_attendance')) || {};
+            const dates = Object.keys(allAtt).sort().reverse(); // Sort dates (newest first)
+            
+            tbody.innerHTML = '';
+            let recordFound = false;
+
+            // 2. Loop Through Data
+            dates.forEach(date => {
+                const dayRecord = allAtt[date];
+                
+                // Check if THIS user has attendance on THAT date
+                // Note: user.id must match the ID used by Admin
+                if(dayRecord && dayRecord[user.id]) {
+                    const status = dayRecord[user.id];
+                    recordFound = true;
+                    
+                    const row = `
+                        <tr>
+                            <td>${formatDate(date)}</td>
+                            <td><span class="badge ${status}">${status}</span></td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                }
+            });
+
+            // 3. Empty State Check
+            if (!recordFound) {
+                tbody.innerHTML = `<tr><td colspan='2' style="text-align:center; padding:20px; color:var(--text-muted);">No attendance records found for ID: <b>${user.id}</b></td></tr>`;
+            }
+        }
+
+        // Helper: Format Date nicely
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Run on Load
+        if(user && user.id) {
+            loadAttendance();
+        } else {
+            alert("User Session Error. Please Login again.");
+            window.location.href = "../../login.html";
+        }
+    </script>
+</body>
+</html>

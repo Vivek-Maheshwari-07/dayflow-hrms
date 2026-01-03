@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - HRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+        /* Reusing Login CSS for Consistency */
+        :root {
+            --primary: #4F46E5; --primary-hover: #4338ca;
+            --bg-body: #F8FAFC; --bg-card: #FFFFFF;
+            --text-main: #0F172A; --text-muted: #64748B;
+            --border: #E2E8F0; --input-bg: #F1F5F9;
+        }
+        [data-theme="dark"] {
+            --primary: #818CF8; --primary-hover: #6366f1;
+            --bg-body: #0F172A; --bg-card: #1E293B;
+            --text-main: #F8FAFC; --text-muted: #94A3B8;
+            --border: #334155; --input-bg: #020617;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.3s; }
+        body { background: var(--bg-body); color: var(--text-main); height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+
+        .blob {
+            position: absolute; width: 600px; height: 600px; top: -20%; left: -20%;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.2) 0%, transparent 70%);
+            border-radius: 50%; filter: blur(80px); z-index: -1;
+        }
+
+        .card {
+            background: var(--bg-card); width: 100%; max-width: 450px;
+            padding: 40px; border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; }
+        p { color: var(--text-muted); margin-bottom: 25px; font-size: 0.95rem; }
+
+        .input-group { text-align: left; margin-bottom: 15px; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-main); }
+        input, select {
+            width: 100%; padding: 12px 16px; border-radius: 12px;
+            border: 1px solid var(--border); background: var(--input-bg);
+            color: var(--text-main); outline: none; font-size: 0.95rem;
+        }
+        input:focus, select:focus { border-color: var(--primary); background: var(--bg-card); }
+
+        .btn-signup {
+            width: 100%; padding: 14px; border-radius: 12px; border: none;
+            background: var(--primary); color: white; font-weight: 600;
+            font-size: 1rem; cursor: pointer; margin-top: 10px;
+        }
+        .btn-signup:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+        .footer-link { margin-top: 20px; font-size: 0.9rem; color: var(--text-muted); }
+        .footer-link a { color: var(--primary); text-decoration: none; font-weight: 600; }
+
+        .top-controls { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; }
+        .icon-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; }
+        .icon-btn:hover { border-color: var(--primary); color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div class="top-controls">
+        <a href="../../index.html" class="icon-btn" title="Home"><i class="ri-home-4-line"></i></a>
+        <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme"><i class="ri-moon-line"></i></button>
+    </div>
+
+    <div class="blob"></div>
+
+    <div class="card">
+        <h2>Join the Team</h2>
+        <p>Create your account to get started.</p>
+
+        <form onsubmit="signup(event)">
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="username" placeholder="John Doe" required>
+                </div>
+                <div class="input-group">
+                    <label>Employee ID</label>
+                    <input type="text" id="employeeId" placeholder="EMP01" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="email" placeholder="name@company.com" required>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Min 6 chars" required>
+            </div>
+
+            <div class="input-group">
+                <label>Role</label>
+                <select id="role">
+                    <option value="Employee">Employee</option>
+                    <option value="Admin">HR / Admin</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-signup" id="signBtn">Create Account</button>
+        </form>
+
+        <div class="footer-link">
+            Already have an account? <a href="login.html">Sign In</a>
+        </div>
+    </div>
+
+    <script>
+        // Theme Logic
+        if(localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+
+        // Signup Logic
+        async function signup(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const employeeId = document.getElementById('employeeId').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            const btn = document.getElementById('signBtn');
+
+            btn.innerText = "Creating Account...";
+            btn.style.opacity = "0.7";
+
+            try {
+                // 1. Backend Save
+                const res = await fetch('http://localhost:5000/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, employeeId, email, password, role })
+                });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    // 2. Sync for Admin Panel (If Employee)
+                    if(role === 'Employee') {
+                        let employees = JSON.parse(localStorage.getItem('hrms_employees')) || [];
+                        if(!employees.some(e => e.id === employeeId)) {
+                            employees.push({ id: employeeId, name: username, email: email, dept: 'Not Assigned', status: 'Active' });
+                            localStorage.setItem('hrms_employees', JSON.stringify(employees));
+                        }
+                    }
+                    alert("Account Created! Redirecting...");
+                    window.location.href = "login.html";
+                } else {
+                    alert(data.message);
+                    btn.innerText = "Create Account";
+                    btn.style.opacity = "1";
+                }
+            } catch (err) { 
+                alert("Server Error. Make sure Backend is running!"); 
+                btn.innerText = "Create Account";
+                btn.style.opacity = "1";
+            }
+        }
+    </script>
+</body>
+</html>

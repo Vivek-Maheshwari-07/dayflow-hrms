@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Requests - HRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- <li><a href="profile.html"><i class="ri-user-settings-line"></i> Admin Profile</a></li> -->
+    <style>
+        :root { --primary-color: #4F46E5; --bg-body: #F3F4F6; --bg-card: #FFFFFF; --bg-sidebar: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --border-color: #E5E7EB; }
+        [data-theme="dark"] { --primary-color: #6366f1; --bg-body: #0F172A; --bg-card: #1E293B; --bg-sidebar: #1E293B; --text-main: #F9FAFB; --text-muted: #9CA3AF; --border-color: #334155; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; transition: background 0.3s, color 0.3s; }
+        body { background-color: var(--bg-body); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
+        a { text-decoration: none; color: inherit; }
+        .sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
+        .sidebar-header h2 { color: var(--primary-color); font-size: 1.5rem; margin-bottom: 40px; }
+        .nav-links { list-style: none; }
+        .nav-links li { margin-bottom: 8px; }
+        .nav-links a { display: flex; align-items: center; padding: 12px; color: var(--text-muted); border-radius: 8px; font-weight: 500; }
+        .nav-links a i { margin-right: 12px; font-size: 1.2rem; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--primary-color); color: white; }
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .top-navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .btn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: 500; font-size: 0.9rem; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .table-card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 15px; background: var(--bg-body); color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; font-weight: 600; }
+        td { padding: 15px; border-bottom: 1px solid var(--border-color); color: var(--text-main); font-size: 0.9rem; vertical-align: middle; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .badge-pending { background: rgba(245, 158, 11, 0.15); color: #F59E0B; }
+        .badge-approved { background: rgba(16, 185, 129, 0.15); color: #10B981; }
+        .badge-rejected { background: rgba(239, 68, 68, 0.15); color: #EF4444; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--bg-card); padding: 30px; border-radius: 12px; width: 100%; max-width: 450px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-body); color: var(--text-main); outline: none; }
+        .close-modal { float: right; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header"><h2>HRMS<span style="font-size: 0.6em; color: var(--text-muted);">.App</span></h2></div>
+        <ul class="nav-links">
+            <li><a href="dashboard.html"><i class="ri-dashboard-line"></i> Dashboard</a></li>
+            <li><a href="all-employees.html"><i class="ri-user-line"></i> All Employees</a></li>
+            <li><a href="leave-requests.html" class="active"><i class="ri-calendar-check-line"></i> Leave Requests</a></li>
+            <li><a href="attendance.html"><i class="ri-time-line"></i> Attendance</a></li>
+            <li><a href="payroll.html"><i class="ri-wallet-3-line"></i> Payroll</a></li>
+        </ul>
+    </aside>
+    <main class="main-content">
+        <div class="top-navbar">
+            <div class="page-title"><h1>Leave Requests</h1></div>
+            <div class="user-profile"><button class="btn" onclick="toggleTheme()" style="background:var(--bg-card); border:1px solid var(--border-color)">🌙</button><span>Admin User</span></div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; gap: 10px;">
+            <button class="btn btn-primary" onclick="openModal()">+ Apply Leave (Demo)</button>
+            <button class="btn" onclick="clearData()" style="color: #EF4444; border: 1px solid #EF4444; background: transparent;">Reset</button>
+        </div>
+        <div class="table-card">
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Employee</th><th>Leave Type</th><th>Dates</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody id="leaveTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <div class="modal" id="leaveModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 style="margin-bottom: 20px;">Apply for Leave</h2>
+            <form id="leaveForm">
+                <div class="form-group"><label>Employee Name</label><input type="text" id="empName" placeholder="e.g. Preet Dhoriyani"></div>
+                <div class="form-group"><label>Leave Type</label><select id="leaveType"><option value="Sick Leave">Sick Leave</option><option value="Casual Leave">Casual Leave</option><option value="Unpaid Leave">Unpaid Leave</option></select></div>
+                <div class="form-group"><label>Date</label><input type="date" id="leaveDate"></div>
+                <div class="form-group"><label>Reason</label><textarea id="leaveReason" rows="3" placeholder="Why do you need leave?"></textarea></div>
+                <button type="button" onclick="submitLeave()" class="btn btn-primary" style="width: 100%;">Submit Request</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        const modal = document.getElementById('leaveModal');
+        const tableBody = document.getElementById('leaveTableBody');
+        document.addEventListener('DOMContentLoaded', () => { loadLeaves(); if(localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark'); });
+        function openModal() { modal.classList.add('active'); }
+        function closeModal() { modal.classList.remove('active'); document.getElementById('leaveForm').reset(); }
+        window.onclick = (e) => { if(e.target == modal) closeModal(); }
+        function submitLeave() {
+            const name = document.getElementById('empName').value; const type = document.getElementById('leaveType').value; const date = document.getElementById('leaveDate').value; const reason = document.getElementById('leaveReason').value;
+            if(!name || !date) { alert("Name and Date are required!"); return; }
+            const newLeave = { id: Date.now(), name, type, date, reason, status: 'Pending' };
+            let leaves = JSON.parse(localStorage.getItem('hrms_leaves')) || [];
+            leaves.push(newLeave); localStorage.setItem('hrms_leaves', JSON.stringify(leaves));
+            addRowToTable(newLeave); closeModal(); alert("Leave Request Submitted!");
+        }
+        function loadLeaves() {
+            tableBody.innerHTML = ''; let leaves = JSON.parse(localStorage.getItem('hrms_leaves')) || [];
+            if(leaves.length === 0) { tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No leave requests found.</td></tr>'; } else { leaves.forEach(addRowToTable); }
+        }
+        function updateStatus(id, newStatus) {
+            let leaves = JSON.parse(localStorage.getItem('hrms_leaves')) || [];
+            const index = leaves.findIndex(l => l.id == id);
+            if(index !== -1) { leaves[index].status = newStatus; localStorage.setItem('hrms_leaves', JSON.stringify(leaves)); loadLeaves(); }
+        }
+        function clearData() { if(confirm("Clear all requests?")) { localStorage.removeItem('hrms_leaves'); loadLeaves(); } }
+        function addRowToTable(leave) {
+            const tr = document.createElement('tr');
+            let statusBadge = `<span class="badge badge-pending">Pending</span>`;
+            if(leave.status === 'Approved') statusBadge = `<span class="badge badge-approved">Approved</span>`;
+            if(leave.status === 'Rejected') statusBadge = `<span class="badge badge-rejected">Rejected</span>`;
+            let actionButtons = '';
+            if(leave.status === 'Pending') { actionButtons = `<button class="btn" style="color:#10B981; border:1px solid #10B981; padding:4px 8px; margin-right:5px;" onclick="updateStatus(${leave.id}, 'Approved')">Approve</button><button class="btn" style="color:#EF4444; border:1px solid #EF4444; padding:4px 8px;" onclick="updateStatus(${leave.id}, 'Rejected')">Reject</button>`; } else { actionButtons = `<span style="color:var(--text-muted); font-size:0.8rem;">Completed</span>`; }
+            tr.innerHTML = `<td><span style="font-weight:600">${leave.name}</span></td><td>${leave.type}</td><td>${leave.date}</td><td style="max-width:200px; font-size:0.85rem; color:var(--text-muted);">${leave.reason || '-'}</td><td>${statusBadge}</td><td>${actionButtons}</td>`;
+            tableBody.appendChild(tr);
+        }
+        function toggleTheme() { const body = document.body; const isDark = body.getAttribute('data-theme') === 'dark'; body.setAttribute('data-theme', isDark ? 'light' : 'dark'); localStorage.setItem('theme', isDark ? 'light' : 'dark'); }
+    </script>
+</body>
+</html>

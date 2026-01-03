@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRMS.App - Future of Work</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+        /* --- VARIABLES --- */
+        :root {
+            --primary: #4F46E5;
+            --primary-glow: rgba(79, 70, 229, 0.5);
+            --bg-body: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --card-bg: #FFFFFF;
+            --border: #E2E8F0;
+            --nav-bg: rgba(255, 255, 255, 0.8);
+        }
+
+        [data-theme="dark"] {
+            --primary: #818CF8;
+            --primary-glow: rgba(129, 140, 248, 0.4);
+            --bg-body: #0F172A;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --card-bg: #1E293B;
+            --border: #334155;
+            --nav-bg: rgba(15, 23, 42, 0.8);
+        }
+
+        /* --- GLOBAL STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s, color 0.3s, border-color 0.3s; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); overflow-x: hidden; }
+        a { text-decoration: none; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0px, 0px); }
+            50% { transform: translate(-20px, 20px); }
+            100% { transform: translate(0px, 0px); }
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            background: var(--nav-bg); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        
+        .btn { padding: 10px 24px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 0.95rem; border: 1px solid transparent; }
+        .btn-outline { border-color: var(--border); background: transparent; color: var(--text-main); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 10px 20px -10px var(--primary-glow); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -10px var(--primary-glow); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            position: relative;
+            padding: 160px 5% 100px;
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        /* Animated Background Blob */
+        .blob {
+            position: absolute;
+            top: -50%; left: 50%; transform: translate(-50%, 0);
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            opacity: 0.5;
+            filter: blur(80px);
+            z-index: -1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0; animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            opacity: 0; animation: fadeInUp 0.8s ease-out 0.2s forwards;
+        }
+
+        .hero-btns {
+            display: flex; gap: 15px; justify-content: center;
+            opacity: 0; animation: fadeInUp 0.8s ease-out 0.4s forwards;
+        }
+
+        /* --- FEATURES GRID --- */
+        .features { padding: 80px 5%; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+            opacity: 0; animation: fadeInUp 0.8s ease-out 0.6s forwards;
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 20px 40px -20px rgba(0,0,0,0.1); }
+        
+        .icon-box {
+            width: 50px; height: 50px;
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .card h3 { margin-bottom: 10px; font-size: 1.2rem; }
+        .card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 60px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero-btns { flex-direction: column; padding: 0 20px; }
+            .blob { width: 300px; height: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blob"></div>
+
+    <nav class="navbar">
+        <div class="logo">
+            <i class="ri-bubble-chart-fill"></i> HRMS.App
+        </div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <button class="btn btn-outline" onclick="toggleTheme()" style="padding: 8px 12px;"><i class="ri-moon-line"></i></button>
+            <a href="frontend/pages/login.html" class="btn btn-outline">Login</a>
+            <a href="frontend/pages/signup.html" class="btn btn-primary">Get Started</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Manage Your Team<br>Like a Pro.</h1>
+        <p>The ultimate platform for Attendance, Payroll, and Employee Management. Simple, Fast, and Secure.</p>
+        
+        <div class="hero-btns">
+            <a href="frontend/pages/signup.html" class="btn btn-primary" style="padding: 14px 40px; font-size: 1.1rem;">Create Account</a>
+            <a href="frontend/pages/login.html" class="btn btn-outline" style="padding: 14px 40px; font-size: 1.1rem;">Admin Login</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="grid">
+            <div class="card">
+                <div class="icon-box"><i class="ri-team-fill"></i></div>
+                <h3>Employee Database</h3>
+                <p>Keep track of all your employees, their roles, and personal details in one secure place.</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="ri-calendar-check-fill"></i></div>
+                <h3>Smart Attendance</h3>
+                <p>Daily attendance marking with detailed history logs for both Admins and Employees.</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="ri-wallet-3-fill"></i></div>
+                <h3>Payroll System</h3>
+                <p>Calculate salaries, manage bonuses, and handle deductions effortlessly.</p>
+            </div>
+            <div class="card">
+                <div class="icon-box"><i class="ri-plane-fill"></i></div>
+                <h3>Leave Management</h3>
+                <p>Streamlined leave application process with instant approval/rejection status.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 HRMS.App. Designed for Excellence.</p>
+    </footer>
+
+    <script>
+        // Check for saved theme
+        if(localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
+
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+/* Light Theme (Default) */
+:root {
+    --primary-color: #4F46E5;       /* Indigo for actions */
+    --primary-hover: #4338ca;
+    --secondary-color: #64748b;     /* Slate for text */
+    
+    --bg-body: #F3F4F6;             /* Light Grey Background */
+    --bg-card: #FFFFFF;             /* White Cards */
+    --bg-sidebar: #FFFFFF;
+    
+    --text-main: #111827;           /* Almost Black */
+    --text-muted: #6B7280;          /* Grey Text */
+    
+    --border-color: #E5E7EB;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    
+    --status-success: #10B981;      /* Green */
+    --status-warning: #F59E0B;      /* Yellow/Orange */
+    --status-danger: #EF4444;       /* Red */
+}
+
+/* Dark Theme Data Attribute */
+[data-theme="dark"] {
+    --primary-color: #6366f1;       /* Brighter Indigo */
+    --primary-hover: #818cf8;
+    
+    --bg-body: #0F172A;             /* Dark Navy Background */
+    --bg-card: #1E293B;             /* Slate Dark for Cards */
+    --bg-sidebar: #1E293B;
+    
+    --text-main: #F9FAFB;           /* White Text */
+    --text-muted: #9CA3AF;          /* Light Grey Text */
+    
+    --border-color: #334155;
+    --shadow-sm: none;
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+}

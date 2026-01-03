@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Apply Leave</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        /* Shared CSS */
+        :root { --primary-color: #4F46E5; --bg-body: #F3F4F6; --bg-card: #FFFFFF; --bg-sidebar: #FFFFFF; --text-main: #111827; --text-muted: #6B7280; --border-color: #E5E7EB; }
+        [data-theme="dark"] { --primary-color: #6366f1; --bg-body: #0F172A; --bg-card: #1E293B; --bg-sidebar: #1E293B; --text-main: #F9FAFB; --text-muted: #9CA3AF; --border-color: #334155; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; transition:background 0.3s, color 0.3s; }
+        body { background-color:var(--bg-body); color:var(--text-main); height:100vh; display:flex; overflow:hidden; }
+        a { text-decoration:none; color:inherit; }
+        .sidebar { width:260px; background:var(--bg-sidebar); border-right:1px solid var(--border-color); display:flex; flex-direction:column; padding:20px; }
+        .nav-links { list-style:none; } .nav-links li { margin-bottom:8px; }
+        .nav-links a { display:flex; align-items:center; padding:12px; color:var(--text-muted); border-radius:8px; font-weight:500; }
+        .nav-links a:hover, .nav-links a.active { background-color:var(--primary-color); color:white; }
+        .nav-links i { margin-right:12px; }
+        .main-content { flex:1; padding:30px; overflow-y:auto; }
+
+        .card { background:var(--bg-card); padding:20px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:20px; max-width:600px; }
+        input, select, textarea { width: 100%; padding: 10px; margin: 5px 0 15px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-body); color: var(--text-main); }
+        .btn { padding: 10px 20px; background: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border-color); text-align: left; }
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; }
+        .Pending { background: rgba(245, 158, 11, 0.15); color: #F59E0B; }
+        .Approved { background: rgba(16, 185, 129, 0.15); color: #10B981; }
+        .Rejected { background: rgba(239, 68, 68, 0.15); color: #EF4444; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div style="margin-bottom:40px;"><h2 style="color:var(--primary-color);">HRMS<span style="font-size:0.6em; color:var(--text-muted);">.Emp</span></h2></div>
+        <ul class="nav-links">
+            <li><a href="dashboard.html"><i class="ri-dashboard-line"></i> Dashboard</a></li>
+            <li><a href="profile.html"><i class="ri-user-settings-line"></i> My Profile</a></li>
+            <li><a href="attendance.html"><i class="ri-time-line"></i> Attendance</a></li>
+            <li><a href="leave.html" class="active"><i class="ri-calendar-check-line"></i> Leave Request</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <h1>Leave Management</h1>
+        <br>
+        <div class="card">
+            <h3>Apply for Leave</h3><br>
+            <form onsubmit="applyLeave(event)">
+                <label>Type</label>
+                <select id="type"><option>Sick Leave</option><option>Casual Leave</option><option>Unpaid Leave</option></select>
+                <label>Date</label>
+                <input type="date" id="date" required>
+                <label>Reason</label>
+                <textarea id="reason" rows="3" required></textarea>
+                <button class="btn" type="submit">Submit Request</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3>My History</h3><br>
+            <table>
+                <thead><tr><th>Date</th><th>Type</th><th>Status</th></tr></thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if(localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
+
+        function loadHistory() {
+            const tbody = document.getElementById('historyBody');
+            tbody.innerHTML = '';
+            const allLeaves = JSON.parse(localStorage.getItem('hrms_leaves')) || [];
+            // Match by Name (or ID if available in leaves)
+            const myLeaves = allLeaves.filter(l => l.name === user.name); 
+            
+            myLeaves.forEach(l => {
+                tbody.innerHTML += `<tr><td>${l.date}</td><td>${l.type}</td><td><span class="badge ${l.status}">${l.status}</span></td></tr>`;
+            });
+        }
+
+        function applyLeave(e) {
+            e.preventDefault();
+            const type = document.getElementById('type').value;
+            const date = document.getElementById('date').value;
+            const reason = document.getElementById('reason').value;
+
+            const newLeave = {
+                id: Date.now(),
+                name: user.name, 
+                type, date, reason,
+                status: 'Pending'
+            };
+
+            let leaves = JSON.parse(localStorage.getItem('hrms_leaves')) || [];
+            leaves.push(newLeave);
+            localStorage.setItem('hrms_leaves', JSON.stringify(leaves));
+            
+            alert("Sent!");
+            loadHistory();
+            e.target.reset();
+        }
+        loadHistory();
+    </script>
+</body>
+</html>

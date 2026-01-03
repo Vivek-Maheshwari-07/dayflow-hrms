@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - HRMS</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+        /* --- UNIFIED THEME CSS (Same as Dashboard) --- */
+        :root { 
+            --primary-color: #4F46E5; 
+            --bg-body: #F3F4F6; 
+            --bg-card: #FFFFFF; 
+            --bg-sidebar: #FFFFFF; 
+            --text-main: #111827; 
+            --text-muted: #6B7280; 
+            --border-color: #E5E7EB; 
+        }
+        [data-theme="dark"] { 
+            --primary-color: #6366f1; 
+            --bg-body: #0F172A; 
+            --bg-card: #1E293B; 
+            --bg-sidebar: #1E293B; 
+            --text-main: #F9FAFB; 
+            --text-muted: #9CA3AF; 
+            --border-color: #334155; 
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; transition: background 0.3s, color 0.3s; }
+        body { background-color: var(--bg-body); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
+        a { text-decoration: none; color: inherit; }
+
+        /* Sidebar */
+        .sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
+        .sidebar-header h2 { color: var(--primary-color); font-size: 1.5rem; margin-bottom: 40px; }
+        .nav-links { list-style: none; }
+        .nav-links li { margin-bottom: 8px; }
+        .nav-links a { display: flex; align-items: center; padding: 12px; color: var(--text-muted); border-radius: 8px; font-weight: 500; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--primary-color); color: white; }
+        .nav-links i { margin-right: 12px; font-size: 1.2rem; }
+
+        /* Main Content */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .top-navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .page-title h1 { font-size: 1.5rem; }
+        .user-profile { display: flex; align-items: center; gap: 15px; }
+
+        .btn { padding: 8px 15px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-card); cursor: pointer; color: var(--text-main); }
+        .btn-primary { background-color: var(--primary-color); color: white; border: none; }
+
+        /* Profile Form Card */
+        .profile-card { background: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border-color); max-width: 600px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-muted); font-size: 0.9rem; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-body); color: var(--text-main); outline: none; }
+        .form-group input:disabled { opacity: 0.7; cursor: not-allowed; }
+        
+        .section-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>HRMS<span style="font-size: 0.6em; color: var(--text-muted);">.Emp</span></h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="dashboard.html"><i class="ri-dashboard-line"></i> Dashboard</a></li>
+            <li><a href="profile.html" class="active"><i class="ri-user-settings-line"></i> My Profile</a></li>
+            <li><a href="attendance.html"><i class="ri-time-line"></i> Attendance</a></li>
+            <li><a href="leave.html"><i class="ri-calendar-check-line"></i> Leave Request</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-navbar">
+            <div class="page-title">
+                <h1>My Profile</h1>
+            </div>
+            <div class="user-profile">
+                <button class="btn" onclick="toggleTheme()">🌙</button>
+                <span id="navUserName">User</span>
+            </div>
+        </div>
+
+        <div class="profile-card">
+            <div class="section-title">Personal Information</div>
+            
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="name" disabled>
+            </div>
+
+            <div class="form-group">
+                <label>Employee ID</label>
+                <input type="text" id="eid" disabled>
+            </div>
+
+            <div class="section-title" style="margin-top: 30px;">Contact Details (Editable)</div>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" id="phone" placeholder="Enter Phone Number">
+            </div>
+
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" id="address" placeholder="Enter Current Address">
+            </div>
+
+            <button class="btn btn-primary" onclick="saveProfile()" style="width: 100%; margin-top: 10px;">Save Changes</button>
+        </div>
+    </main>
+
+    <script>
+        // 1. Auth Check
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if(!user) window.location.href = '../../login.html';
+        document.getElementById('navUserName').innerText = user.name;
+
+        // 2. Theme Logic
+        if(localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
+
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+
+        // 3. Load Profile Data
+        const profileKey = `profile_${user.id}`;
+        const savedProfile = JSON.parse(localStorage.getItem(profileKey)) || {};
+
+        document.getElementById('name').value = user.name;
+        document.getElementById('eid').value = user.id;
+        document.getElementById('phone').value = savedProfile.phone || '';
+        document.getElementById('address').value = savedProfile.address || '';
+
+        // 4. Save Profile Data
+        function saveProfile() {
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            
+            // Save to LocalStorage specifically for this user ID
+            localStorage.setItem(profileKey, JSON.stringify({ phone, address }));
+            alert("✅ Profile Updated Successfully!");
+        }
+    </script>
+</body>
+</html>

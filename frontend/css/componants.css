@@ -1,0 +1,106 @@
+/* --- MODERN TABLE CARD --- */
+.table-card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    padding: 0;
+    overflow: hidden; /* Important for rounded corners */
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse; /* Gaps hatane ke liye */
+    border-spacing: 0;
+}
+
+/* Header */
+thead {
+    background-color: var(--bg-body); /* Light grey header */
+}
+
+th {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+/* Body */
+td {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-main);
+    font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+tbody tr:last-child td {
+    border-bottom: none; /* Last row border hatao */
+}
+
+tbody tr:hover {
+    background-color: rgba(79, 70, 229, 0.03); /* Soft hover effect */
+    cursor: default;
+}
+
+/* --- BADGES (Status) --- */
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    display: inline-block;
+    min-width: 80px;
+}
+
+.badge-active { background: #dcfce7; color: #166534; }  /* Green */
+.badge-leave  { background: #fef3c7; color: #92400e; }  /* Yellow */
+.badge-inactive { background: #fee2e2; color: #991b1b; } /* Red */
+
+/* Dark Mode Overrides for Badges */
+[data-theme="dark"] .badge-active { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+[data-theme="dark"] .badge-leave { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+[data-theme="dark"] .badge-inactive { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+/* --- ACTION BUTTONS --- */
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: all 0.2s;
+}
+
+.btn-edit {
+    background-color: rgba(79, 70, 229, 0.1);
+    color: var(--primary-color);
+}
+.btn-edit:hover { background-color: var(--primary-color); color: white; }
+
+.btn-delete {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--status-danger);
+}
+.btn-delete:hover { background-color: var(--status-danger); color: white; }
+
+/* Modal CSS same as before... */
+.modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+.modal.active { display: flex; }
+.modal-content { background-color: var(--bg-card); padding: 30px; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); animation: slideUp 0.3s ease; }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.close-modal { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
